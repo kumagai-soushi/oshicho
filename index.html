@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>サブカル会 推し帳</title>
+<meta name="description" content="サブカル会の推しを共有する帳面">
+<meta name="theme-color" content="#1f2a5a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="推し帳">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="noren">
+  <h1>サブカル会<br>推し帳</h1>
+  <p class="sub"><span id="next">次回：未定</span><span class="days" id="days"></span></p>
+  <button class="gear" id="gear" aria-label="設定">設定</button>
+  <div class="flaps" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+</header>
+
+<main class="wrap">
+  <nav class="tabs" role="tablist">
+    <button class="tab on" role="tab" aria-selected="true" data-tab="oshi">推し帳</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="shun">旬ネタ<small>準備中</small></button>
+  </nav>
+
+  <div id="p-oshi">
+    <section class="hw"><h2>次回までの宿題</h2><div class="tanzaku" id="hw"><div class="empty">読み込み中…</div></div></section>
+    <section class="list"><h2>みんなの推し品書き</h2>
+      <div class="bar" id="filters"></div>
+      <div class="bar" id="sorts"></div>
+      <div class="cards" id="cards"></div>
+    </section>
+  </div>
+
+  <div id="p-shun" hidden>
+    <section class="hw"><h2>旬ネタ</h2>
+      <div class="empty">準備中です。今クールのアニメや話題作をここに並べる予定です。</div>
+    </section>
+  </div>
+</main>
+<button class="fab" id="fab" hidden>＋ 推す</button>
+
+<!-- 入口：合言葉 → 呼び名 -->
+<div class="gate" id="gate" hidden>
+  <form class="gate-in" id="gateForm">
+    <h1>サブカル会<br>推し帳</h1>
+    <div id="g-pass">
+      <label for="g-pass-in">合言葉</label>
+      <input id="g-pass-in" type="password" autocomplete="current-password" required>
+      <p class="hint">サブカル会のLINEで届いた合言葉を入れてください。この端末に覚えておきます。</p>
+    </div>
+    <div id="g-nick" hidden>
+      <label for="g-nick-in">あなたの呼び名</label>
+      <input id="g-nick-in" maxlength="30" autocomplete="nickname" required>
+      <p class="hint">「読んだ」「刺さった」の横に出る名前です。あとから設定で変えられます。</p>
+    </div>
+    <p class="err" id="g-err" role="alert"></p>
+    <button class="btn on wide" type="submit" id="g-btn">入る</button>
+  </form>
+</div>
+
+<div class="sheet" id="workSheet"><form class="panel" id="workForm">
+  <h3 id="workTitle">推しを登録</h3>
+  <label for="f-title">作品名</label><input id="f-title" required maxlength="100">
+  <label for="f-media">ジャンル</label><select id="f-media"></select>
+  <label for="f-by">推してる人</label><input id="f-by" maxlength="30">
+  <label for="f-entry">まずはここまで</label><input id="f-entry" maxlength="60" placeholder="1話だけ／1巻／3話まで">
+  <p class="hint">「1話だけ読んでみて」が一番伝わります。</p>
+  <label for="f-note">ひとこと推し</label><textarea id="f-note" maxlength="500"></textarea>
+  <label for="f-link">読める・観られる場所（URL）</label><input id="f-link" type="url" inputmode="url" maxlength="500" placeholder="https://">
+  <div class="row"><button type="button" class="btn" data-close>やめる</button><button class="btn on" type="submit">保存</button></div>
+</form></div>
+
+<div class="sheet" id="setSheet"><form class="panel" id="setForm">
+  <h3>設定</h3>
+  <label for="s-nick">あなたの呼び名</label><input id="s-nick" maxlength="30" required>
+  <p class="hint">呼び名を変えると、これまでの「読んだ」「刺さった」は前の名前のまま残ります。</p>
+  <label for="s-date">次回の開催日</label><input id="s-date" type="date">
+  <label for="s-place">場所・メモ</label><input id="s-place" maxlength="80">
+  <p class="hint">ホーム画面に置くには：iPhoneはSafariの共有ボタン→「ホーム画面に追加」、Androidはメニュー→「ホーム画面に追加」。</p>
+  <div class="row"><button type="button" class="btn" data-close>閉じる</button><button class="btn on" type="submit">保存</button></div>
+  <div class="row left"><button type="button" class="btn sm" id="logout">この端末から合言葉を消す</button></div>
+</form></div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body></html>
