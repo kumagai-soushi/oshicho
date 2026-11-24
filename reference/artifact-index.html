@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>サブカル会 推し帳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 飲み会の熱量はあるけど、道具としては静かに使える
+IDEA: 居酒屋の暖簾と、壁に吊るした短冊メニュー＝「推し品書き」
+PICTURE: 「次回の宿題」の短冊が暖簾の下に大きく吊られている
+COLOUR/TYPE: 藍の暖簾・白地・提灯の朱／Dela Gothic One + Zen Kaku Gothic New
+LAYOUT: スマホ1カラム。暖簾→宿題短冊→品書き一覧、右下に「推す」 */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#10131c);--ink:light-dark(#141821,#eef0f6);--mut:light-dark(#5d6472,#a3a9b8);
+--paper:light-dark(#f3f4f8,#1a1e2b);--line:light-dark(#e1e3ea,#2a2f3f);
+--ai:light-dark(#1f2a5a,#24306a);--ai2:light-dark(#2c3a7a,#33429066);--red:#e0352b;--on:#fff}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Zen Kaku Gothic New",system-ui,sans-serif;overflow-x:clip;padding-bottom:110px}
+button,input,select,textarea{font:inherit;color:inherit}
+.noren{background:var(--ai);color:var(--on);padding:calc(env(safe-area-inset-top) + 18px) max(5vw,16px) 0;position:relative}
+.noren h1{font:400 clamp(30px,8vw,46px)/1.05 "Dela Gothic One",sans-serif;margin:0;letter-spacing:.02em}
+.noren .sub{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;margin:10px 0 0;opacity:.92}
+.noren .days{font:400 22px "Dela Gothic One";color:#ffd5d1}
+.noren .gear{position:absolute;right:max(5vw,12px);top:calc(env(safe-area-inset-top) + 14px);background:none;border:1px solid #ffffff55;color:#fff;border-radius:999px;height:40px;padding:0 14px;cursor:pointer}
+.flaps{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;height:26px;margin-top:18px}
+.flaps i{background:var(--ai);border-radius:0 0 6px 6px;transform:translateY(26px);box-shadow:0 4px 0 #0002}
+.wrap{max-width:760px;margin:0 auto;padding:0 max(4vw,14px)}
+.hw{margin-top:40px}
+.hw h2,.list h2{font:400 18px "Dela Gothic One";margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.hw h2::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px #e0352b33}
+.tanzaku{display:grid;gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative}
+.big{background:var(--bg);border:2px solid var(--ink);border-radius:4px;padding:22px 18px 18px;box-shadow:6px 6px 0 var(--red)}
+.big::before{content:"";position:absolute;left:50%;top:-14px;width:2px;height:14px;background:var(--ink)}
+.big .ttl{font:400 clamp(22px,5.6vw,30px)/1.2 "Dela Gothic One"}
+.ttl{font-weight:700;font-size:18px;line-height:1.35;overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;color:var(--mut);font-size:14px;margin:6px 0}
+.chip{display:inline-block;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:1px 10px;font-size:13px;color:var(--ink);white-space:nowrap}
+.entry{display:inline-block;background:var(--red);color:#fff;border-radius:4px;padding:2px 8px;font-size:13px;font-weight:700}
+.note{margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.who{font-size:13px;color:var(--mut);margin-top:8px}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.btn{min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--bg);padding:0 16px;cursor:pointer;white-space:nowrap}
+.btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.hit.on{background:var(--red);border-color:var(--red);color:#fff}
+.btn.sm{min-height:40px;padding:0 12px;font-size:14px;color:var(--mut)}
+.btn.warn{color:var(--red);border-color:var(--red)}
+.btn:focus-visible,.gear:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.link{color:inherit;font-size:14px}
+.list{margin-top:36px}
+.bar{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px}
+.bar .btn{flex:none;min-height:40px}
+.cards{display:grid;gap:12px}
+.empty{border:2px dashed var(--line);border-radius:14px;padding:22px;color:var(--mut);text-align:center}
+.fab{position:fixed;right:max(5vw,16px);bottom:calc(env(safe-area-inset-bottom) + 18px);height:58px;padding:0 24px;border-radius:999px;border:0;background:var(--red);color:#fff;font:400 18px "Dela Gothic One";box-shadow:0 8px 20px #e0352b55;cursor:pointer}
+.ro{background:var(--paper);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--mut);margin-top:16px}
+.sheet{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;justify-content:center;z-index:9}
+.sheet.open{display:flex}
+.panel{background:var(--bg);width:min(640px,100%);max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:20px max(4vw,16px) calc(env(safe-area-inset-bottom) + 20px)}
+.panel h3{font:400 20px "Dela Gothic One";margin:0 0 12px}
+label{display:block;font-size:14px;font-weight:700;margin:12px 0 4px}
+input,select,textarea{width:100%;font-size:16px;border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--paper)}
+textarea{min-height:84px;resize:vertical}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.hint{font-size:13px;color:var(--mut);margin:4px 0 0}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10}
+.toast.show{opacity:1}
+@media(prefers-reduced-motion:no-preference){.big{animation:sway 1.2s ease-out}@keyframes sway{0%{transform:rotate(-2deg)}50%{transform:rotate(1deg)}100%{transform:none}}}
+</style></head><body>
+<header class="noren">
+  <h1>サブカル会<br>推し帳</h1>
+  <p class="sub"><span id="next">次回：未定</span><span class="days" id="days"></span></p>
+  <button class="gear" id="gear" aria-label="設定">設定</button>
+  <div class="flaps" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+</header>
+<main class="wrap">
+  <div id="ro" class="ro" hidden></div>
+  <section class="hw"><h2>次回までの宿題</h2><div class="tanzaku" id="hw"><div class="empty">読み込み中…</div></div></section>
+  <section class="list"><h2>みんなの推し品書き</h2>
+    <div class="bar" id="filters"></div>
+    <div class="bar" id="sorts"></div>
+    <div class="cards" id="cards"></div>
+  </section>
+</main>
+<button class="fab" id="fab" hidden>＋ 推す</button>
+
+<div class="sheet" id="workSheet"><form class="panel" id="workForm">
+  <h3 id="workTitle">推しを登録</h3>
+  <label for="f-title">作品名</label><input id="f-title" required maxlength="120">
+  <label for="f-media">ジャンル</label><select id="f-media"></select>
+  <label for="f-by">推してる人</label><input id="f-by" maxlength="40">
+  <label for="f-entry">まずはここまで</label><input id="f-entry" maxlength="60" placeholder="1話だけ／1巻／3話まで">
+  <p class="hint">「1話だけ読んでみて」が一番伝わります。</p>
+  <label for="f-note">ひとこと推し</label><textarea id="f-note" maxlength="800"></textarea>
+  <label for="f-link">読める・観られる場所（URL）</label><input id="f-link" type="url" inputmode="url" placeholder="https://">
+  <div class="row"><button type="button" class="btn" data-close>やめる</button><button class="btn on" type="submit">保存</button></div>
+</form></div>
+
+<div class="sheet" id="setSheet"><form class="panel" id="setForm">
+  <h3>設定</h3>
+  <label for="s-nick">あなたの呼び名</label><input id="s-nick" maxlength="30" required>
+  <p class="hint">「読んだ」「刺さった」の横に出る名前です。</p>
+  <label for="s-date">次回の開催日</label><input id="s-date" type="date">
+  <label for="s-place">場所・メモ</label><input id="s-place" maxlength="80">
+  <p class="hint">ホーム画面に置くには：iPhoneはSafariの共有ボタン→「ホーム画面に追加」、Androidはメニュー→「ホーム画面に追加」。</p>
+  <div class="row"><button type="button" class="btn" data-close>閉じる</button><button class="btn on" type="submit">保存</button></div>
+</form></div>
+<div class="toast" id="toast"></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const okUrl=u=>/^https?:\/\//i.test(String(u||''));
+const MEDIA=['漫画','アニメ','映画','ドラマ','小説','ゲーム','音楽','その他'];
+const WD='日月火水木金土';
+let db=null,me=null,canWrite=false,works=[],people={},meta={},loaded=false;
+let filter='すべて',sort='new',editing=null,armed=null;
+let myDoc={nick:'',read:{},hit:{}},chain=Promise.resolve();
+
+$('#f-media').innerHTML=MEDIA.map(m=>`<option>${m}</option>`).join('');
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2000)};
+const open=id=>$(id).classList.add('open');
+const close=()=>document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'));
+
+function nameOf(id){return (people[id]&&people[id].nick)||'誰か'}
+function readers(w){return Object.keys(people).filter(id=>people[id].read&&people[id].read[w.id])}
+function hitters(w){return Object.keys(people).filter(id=>people[id].hit&&people[id].hit[w.id])}
+
+function card(w,big){
+  const r=readers(w),h=hitters(w);
+  const myR=!!myDoc.read[w.id],myH=!!myDoc.hit[w.id];
+  const dis=canWrite?'':' disabled';
+  return `<article class="card${big?' big':''}">
+    <div class="ttl">${esc(w.title)}</div>
+    <div class="meta"><span class="chip">${esc(w.media||'その他')}</span>${w.by?`<span>推し：${esc(w.by)}</span>`:''}${w.entry?`<span class="entry">${esc(w.entry)}</span>`:''}</div>
+    ${w.note?`<p class="note">${esc(w.note)}</p>`:''}
+    ${okUrl(w.link)?`<a class="link" href="${esc(w.link)}" target="_blank" rel="noopener">読める・観られる場所 ↗</a>`:''}
+    <div class="who">読んだ ${r.length}人${r.length?'（'+r.map(id=>esc(nameOf(id))).join('、')+'）':''}／刺さった ${h.length}人${h.length?'（'+h.map(id=>esc(nameOf(id))).join('、')+'）':''}</div>
+    <div class="acts">
+      <button class="btn${myR?' on':''}" data-act="read" data-id="${w.id}"${dis}>${myR?'読んだ ✓':'読んだ'}</button>
+      <button class="btn hit${myH?' on':''}" data-act="hit" data-id="${w.id}"${dis}>刺さった</button>
+      ${canWrite?`<button class="btn sm" data-act="hw" data-id="${w.id}">${w.homework?'宿題から外す':'宿題にする'}</button>
+      <button class="btn sm" data-act="edit" data-id="${w.id}">編集</button>
+      <button class="btn sm${armed===w.id?' warn':''}" data-act="del" data-id="${w.id}">${armed===w.id?'本当に削除':'削除'}</button>`:''}
+    </div></article>`;
+}
+
+function render(){
+  if(meta.date){
+    const d=new Date(meta.date+'T00:00:00+09:00');
+    const [y,m,dd]=meta.date.split('-').map(Number);
+    $('#next').textContent=`次回：${m}月${dd}日(${WD[new Date(y,m-1,dd).getDay()]})${meta.place?'　'+meta.place:''}`;
+    const n=Math.ceil((d-Date.now())/864e5);
+    $('#days').textContent=n>0?`あと${n}日`:n===0?'今日！':'';
+  }else{$('#next').textContent='次回：未定';$('#days').textContent=''}
+  if(!loaded)return;
+  const hw=works.filter(w=>w.homework);
+  $('#hw').innerHTML=hw.length?hw.map(w=>card(w,true)).join(''):`<div class="empty">まだ宿題はありません。品書きから「宿題にする」を押すとここに吊るされます。</div>`;
+  const ms=['すべて',...MEDIA.filter(m=>works.some(w=>w.media===m))];
+  if(!ms.includes(filter))filter='すべて';
+  $('#filters').innerHTML=ms.map(m=>`<button class="btn${m===filter?' on':''}" data-filter="${m}">${m}</button>`).join('');
+  $('#sorts').innerHTML=[['new','新着'],['hit','刺さった順'],['unread','自分が未読']].map(([k,l])=>`<button class="btn sm${k===sort?' on':''}" data-sort="${k}">${l}</button>`).join('');
+  let list=works.filter(w=>filter==='すべて'||w.media===filter);
+  if(sort==='hit')list=[...list].sort((a,b)=>hitters(b).length-hitters(a).length);
+  if(sort==='unread')list=list.filter(w=>!myDoc.read[w.id]);
+  $('#cards').innerHTML=list.length?list.map(w=>card(w,false)).join(''):`<div class="empty">${works.length?'該当する作品はありません。':'まだ何も登録されていません。右下の「推す」から最初の一作をどうぞ。'}</div>`;
+}
+
+function savePerson(){
+  if(!db||!me)return;
+  const body=JSON.parse(JSON.stringify(myDoc));
+  chain=chain.then(()=>db.doc('people/'+me).set(body)).catch(()=>toast('保存できませんでした'));
+}
+
+function openWork(w){
+  editing=w?w.id:null;
+  $('#workTitle').textContent=w?'推しを編集':'推しを登録';
+  $('#f-title').value=w?w.title||'':'';
+  $('#f-media').value=w?w.media||'漫画':'漫画';
+  $('#f-by').value=w?w.by||'':(myDoc.nick||'');
+  $('#f-entry').value=w?w.entry||'':'';
+  $('#f-note').value=w?w.note||'':'';
+  $('#f-link').value=w?w.link||'':'';
+  open('#workSheet');
+}
+function openSet(){
+  $('#s-nick').value=myDoc.nick||'';
+  $('#s-date').value=meta.date||'';
+  $('#s-place').value=meta.place||'';
+  open('#setSheet');
+}
+
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.close!==undefined){close();return}
+  if(t.dataset.filter){filter=t.dataset.filter;render();return}
+  if(t.dataset.sort){sort=t.dataset.sort;render();return}
+  const act=t.dataset.act,id=t.dataset.id;if(!act||!db)return;
+  const w=works.find(x=>x.id===id);if(!w)return;
+  if(act!=='del')armed=null;
+  if(act==='read'||act==='hit'){
+    if(!myDoc.nick){openSet();toast('先に呼び名を決めてください');return}
+    const m=myDoc[act];if(m[id])delete m[id];else m[id]=1;
+    if(act==='hit'&&m[id])myDoc.read[id]=1;
+    people[me]=JSON.parse(JSON.stringify(myDoc));render();savePerson();
+  }else if(act==='hw'){
+    try{await db.doc('works/'+id).update({homework:!w.homework})}catch{toast('更新できませんでした')}
+  }else if(act==='edit'){openWork(w)}
+  else if(act==='del'){
+    if(armed!==id){armed=id;render();return}
+    armed=null;try{await db.doc('works/'+id).delete();toast('削除しました')}catch{toast('削除できませんでした')}
+  }
+});
+$('#gear').onclick=openSet;
+$('#fab').onclick=()=>{if(!myDoc.nick){openSet();toast('先に呼び名を決めてください');return}openWork(null)};
+document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)close()}));
+
+$('#workForm').addEventListener('submit',async e=>{
+  e.preventDefault();if(!db)return;
+  const link=$('#f-link').value.trim();
+  const body={title:$('#f-title').value.trim(),media:$('#f-media').value,by:$('#f-by').value.trim(),entry:$('#f-entry').value.trim(),note:$('#f-note').value.trim(),link:okUrl(link)?link:''};
+  if(!body.title)return;
+  try{
+    if(editing)await db.doc('works/'+editing).update(body);
+    else await db.collection('works').add({...body,homework:false,createdAt:Date.now(),addedBy:me||''});
+    close();toast(editing?'更新しました':'登録しました');
+  }catch{toast('保存できませんでした')}
+});
+$('#setForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const nick=$('#s-nick').value.trim();
+  if(nick&&nick!==myDoc.nick){myDoc.nick=nick;people[me]=JSON.parse(JSON.stringify(myDoc));savePerson()}
+  const date=$('#s-date').value,place=$('#s-place').value.trim();
+  if(db&&canWrite&&(date!==(meta.date||'')||place!==(meta.place||''))){
+    try{await db.doc('meta/next').set({date,place})}catch{toast('開催日を保存できませんでした')}
+  }
+  close();render();
+});
+
+(async()=>{
+  const timer=setTimeout(()=>{if(!loaded){$('#hw').innerHTML='<div class="empty">データにつながりません。ログイン状態と通信を確認してください。</div>'}},10000);
+  db=await claude.use('db');
+  const user=await claude.use('user');
+  if(!db){clearTimeout(timer);$('#hw').innerHTML='<div class="empty">この表示ではデータを読めません。claude.aiにログインして開いてください。</div>';return}
+  me=user?await user.id():null;
+  const cw=user?await user.can('data.write'):null;
+  canWrite=!!me&&cw!==false;
+  if(!canWrite){$('#ro').hidden=false;$('#ro').textContent='閲覧のみモードです。登録や「読んだ」をつけるには、そうしさんに「編集者」として招待してもらってください。'}
+  $('#fab').hidden=!canWrite;
+  if(me&&canWrite){
+    const s=await db.doc('people/'+me).get().catch(()=>null);
+    if(s&&s.exists){const d=s.data();myDoc={nick:d.nick||'',read:{...(d.read||{})},hit:{...(d.hit||{})}}}
+    if(!myDoc.nick){try{const p=await user.me();$('#s-nick').value=(p&&p.name)||''}catch{}setTimeout(()=>{openSet();if(!$('#s-nick').value)$('#s-nick').value=''},50)}
+  }
+  db.collection('works').orderBy('createdAt','desc').onSnapshot(s=>{
+    works=s.docs.map(d=>({id:d.id,...d.data()}));
+    if(!s.metadata.fromCache){loaded=true;clearTimeout(timer)}else loaded=true;
+    render();
+  },()=>{clearTimeout(timer);loaded=true;render()});
+  db.collection('people').onSnapshot(s=>{
+    people={};s.docs.forEach(d=>people[d.id]=d.data());
+    if(me&&canWrite&&people[me]&&!s.metadata.hasPendingWrites){const d=people[me];myDoc={nick:d.nick||myDoc.nick,read:{...(d.read||{})},hit:{...(d.hit||{})}}}
+    render();
+  },()=>{});
+  db.doc('meta/next').onSnapshot(s=>{meta=s.exists?s.data():{};render()},()=>{});
+})();
+}
+</script>
+</body></html>
